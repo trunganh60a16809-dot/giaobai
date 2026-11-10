@@ -1,848 +1,265 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Góc Học Tập Nhỏ</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-    <style>
-        :root {
-            --sky-50: #f0f9ff;
-            --sky-100: #e0f2fe;
-            --sky-400: #38bdf8;
-            --sky-500: #0ea5e9;
-            --sky-600: #0284c7;
-            --green-500: #22c55e;
-            --green-600: #16a34a;
-            --purple-500: #a855f7;
-            --purple-600: #9333ea;
-            --orange-500: #f59e0b;
-            --orange-600: #d97706;
-            --gray-100: #f3f4f6;
-            --gray-300: #d1d5db;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            min-height: 100vh;
-            background: linear-gradient(180deg, #f0f9ff 0%, #ecfeff 100%);
-            font-family: Arial, sans-serif;
-        }
-
-        .glass {
-            background: rgba(255,255,255,0.8);
-            backdrop-filter: blur(8px);
-        }
-
-        .task-card {
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .task-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.08);
-        }
-
-        .status-pill {
-            display: inline-block;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            padding: 4px 8px;
-            border-radius: 999px;
-            color: white;
-            text-transform: uppercase;
-        }
-
-        .empty-state {
-            color: #64748b;
-            font-style: italic;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Góc Học Tập Nhỏ</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    body{min-height:100vh;background:linear-gradient(180deg,#f0f9ff,#ecfeff)}
+    .card{transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-2px);box-shadow:0 10px 24px #0ea5e914}
+    .status{border-radius:999px;color:#fff;font-size:.7rem;font-weight:700;padding:.25rem .6rem;text-transform:uppercase}
+  </style>
 </head>
 <body class="font-sans text-gray-800">
-    <header class="bg-white shadow-md border-b border-sky-100">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl md:text-3xl font-extrabold text-sky-600 tracking-tight">
-                <i class="fas fa-graduation-cap mr-2"></i>Góc Học Tập
-            </h1>
-            <div id="userInfo" class="hidden items-center gap-4">
-                <span id="userNameDisplay" class="font-semibold text-gray-700"></span>
-                <span id="coinDisplay" class="hidden text-orange-500 font-bold">
-                    <i class="fas fa-star"></i> <span id="coinCount">0</span>
-                </span>
-                <button onclick="logout()" class="text-red-500 hover:text-red-700 text-sm font-medium">
-                    <i class="fas fa-sign-out-alt mr-1"></i>Đăng xuất
-                </button>
-            </div>
+  <header class="bg-white shadow-sm border-b border-sky-100">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-extrabold text-sky-600"><i class="fas fa-graduation-cap mr-2"></i>Góc Học Tập</h1>
+      <div id="userInfo" class="hidden items-center gap-3">
+        <span id="userNameDisplay" class="font-semibold"></span>
+        <button onclick="logout()" class="text-red-500 text-sm"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="loginScreen" class="min-h-[calc(100vh-72px)] flex items-center justify-center p-4">
+    <section class="bg-white w-full max-w-md rounded-3xl shadow-xl border border-sky-100 p-8">
+      <div class="text-center mb-6"><div class="inline-flex w-16 h-16 rounded-full bg-sky-100 text-sky-600 items-center justify-center text-2xl mb-3"><i class="fas fa-home"></i></div><h2 class="text-2xl font-bold">Đăng Nhập Gia Đình</h2></div>
+      <input id="familyCode" class="w-full mb-3 p-3 border rounded-xl" placeholder="Mã gia đình" autocomplete="off" />
+      <input id="username" class="w-full mb-5 p-3 border rounded-xl" placeholder="Tên phụ huynh hoặc tên bé" autocomplete="name" />
+      <div class="grid grid-cols-2 gap-3">
+        <button onclick="login('parent')" class="bg-sky-500 hover:bg-sky-600 text-white p-3 rounded-xl font-semibold"><i class="fas fa-user-tie mr-1"></i>Phụ Huynh</button>
+        <button onclick="login('student')" class="bg-green-500 hover:bg-green-600 text-white p-3 rounded-xl font-semibold"><i class="fas fa-child mr-1"></i>Học Sinh</button>
+      </div>
+      <p class="text-xs text-gray-500 mt-4">Mã gia đình chỉ giúp phân loại dữ liệu, không thay thế đăng nhập bảo mật.</p>
+    </section>
+  </main>
+
+  <main id="parentDashboard" class="hidden max-w-6xl mx-auto p-4 md:py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <aside class="bg-white rounded-3xl shadow p-5 h-fit">
+        <h2 class="font-bold text-xl text-sky-700 mb-4"><i class="fas fa-robot mr-2"></i>Soạn bài với AI</h2>
+        <label class="block text-sm mb-1" for="geminiApiKey">Gemini API key (chỉ lưu trong phiên này)</label>
+        <input id="geminiApiKey" type="password" autocomplete="off" class="w-full mb-4 p-3 border rounded-xl" placeholder="Nhập API key" />
+        <label class="block text-sm mb-1" for="subject">Môn học</label>
+        <select id="subject" class="w-full mb-4 p-3 border rounded-xl">
+          <option>Toán</option><option>Tiếng Việt</option><option>Tiếng Anh</option><option>Khoa Học</option><option>Đạo Đức</option><option>Lịch Sử và Địa Lý</option>
+        </select>
+        <div class="flex items-center gap-3 mb-4"><input id="questionCount" type="number" min="1" max="20" value="5" class="w-24 p-3 border rounded-xl" /><span class="text-sm text-gray-600">câu hỏi</span></div>
+        <label class="block text-sm mb-1" for="aiPrompt">Gợi ý thêm</label>
+        <textarea id="aiPrompt" rows="3" class="w-full mb-4 p-3 border rounded-xl" placeholder="Ví dụ: bài toán vui, phù hợp học sinh lớp 2"></textarea>
+        <button id="generateBtn" onclick="generateTasks()" class="w-full bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-xl font-bold"><i class="fas fa-magic mr-2"></i>Tạo bài tập</button>
+      </aside>
+
+      <section class="lg:col-span-2 space-y-5">
+        <div class="bg-white rounded-3xl shadow p-5">
+          <h2 class="font-bold text-xl mb-4"><i class="fas fa-users mr-2"></i>Quản lý học sinh</h2>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input id="newStudentName" class="flex-1 p-3 border rounded-xl" placeholder="Tên bé mới" />
+            <button onclick="addStudent()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-xl"><i class="fas fa-plus mr-1"></i>Thêm bé</button>
+          </div>
+          <div class="flex items-center gap-3 mt-4"><label for="studentSelect" class="text-sm font-medium">Đang xem bé:</label><select id="studentSelect" class="flex-1 max-w-sm p-3 border rounded-xl"></select></div>
         </div>
-    </header>
-
-    <main id="loginScreen" class="min-h-[calc(100vh-80px)] flex items-center justify-center p-4">
-        <div class="glass w-full max-w-md rounded-3xl shadow-2xl border border-sky-100 p-8">
-            <div class="text-center mb-6">
-                <div class="inline-flex w-16 h-16 rounded-full bg-sky-100 text-sky-600 items-center justify-center text-2xl mb-4">
-                    <i class="fas fa-home"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-800">Đăng Nhập Gia Đình</h2>
-            </div>
-
-            <input id="familyCode" type="text" placeholder="Mã gia đình (VD: GIADINH123)" class="w-full mb-4 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
-            <input id="username" type="text" placeholder="Tên của bạn (hoặc tên bé)" class="w-full mb-4 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
-            <input id="studentNameInput" type="text" placeholder="Tên bé học sinh (nếu là phụ huynh thêm học sinh mới)" class="w-full mb-6 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
-
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="login('parent')" class="bg-sky-500 text-white p-3 rounded-xl hover:bg-sky-600 font-semibold shadow-md transition">
-                    <i class="fas fa-user-tie mr-2"></i>Phụ Huynh
-                </button>
-                <button onclick="login('student')" class="bg-green-500 text-white p-3 rounded-xl hover:bg-green-600 font-semibold shadow-md transition">
-                    <i class="fas fa-child mr-2"></i>Học Sinh
-                </button>
-            </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="bg-white rounded-2xl p-4 text-center shadow"><b id="statTotal" class="block text-2xl text-sky-600">0</b><span>Tổng bài</span></div>
+          <div class="bg-white rounded-2xl p-4 text-center shadow"><b id="statSubmitted" class="block text-2xl text-yellow-600">0</b><span>Đã nộp</span></div>
+          <div class="bg-white rounded-2xl p-4 text-center shadow"><b id="statGraded" class="block text-2xl text-green-600">0</b><span>Đã chấm</span></div>
+          <div class="bg-white rounded-2xl p-4 text-center shadow"><b id="statStars" class="block text-2xl text-orange-600">0</b><span>Sao</span></div>
         </div>
-    </main>
-
-    <main id="parentDashboard" class="hidden max-w-7xl mx-auto px-4 py-6 md:py-8">
-        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
-            <!-- AI generator -->
-            <aside class="xl:col-span-1 bg-white rounded-3xl shadow-lg p-5 border border-sky-100 h-fit">
-                <h3 class="font-bold text-xl text-sky-700 mb-4"><i class="fas fa-robot mr-2"></i>AI Soạn Bài</h3>
-
-                <label class="block text-sm font-medium text-gray-600 mb-2">API Gemini</label>
-                <input id="geminiApiKey" type="password" placeholder="Nhập API Key Gemini của bạn..." class="w-full mb-4 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
-
-                <label class="block text-sm font-medium text-gray-600 mb-2">Môn học</label>
-                <select id="subject" class="w-full mb-4 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400">
-                    <option value="Toán">Toán</option>
-                    <option value="Tiếng Việt">Tiếng Việt</option>
-                    <option value="Tiếng Anh">Tiếng Anh</option>
-                    <option value="Khoa Học">Khoa Học</option>
-                    <option value="Đạo Đức">Đạo Đức</option>
-                </select>
-
-                <div class="flex items-center gap-3 mb-4">
-                    <input id="questionCount" type="number" value="5" min="1" max="20" class="w-24 p-3 border border-sky-200 rounded-xl text-center focus:outline-none focus:ring-2 focus:ring-sky-400" />
-                    <span class="text-sm text-gray-600">câu hỏi</span>
-                </div>
-
-                <label class="block text-sm font-medium text-gray-600 mb-2">Gợi ý thêm</label>
-                <textarea id="aiPrompt" rows="3" placeholder="Ví dụ: bài toán vui, có hình ảnh ẩn dụ, 2 câu hỏi dễ..." class="w-full mb-4 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400"></textarea>
-
-                <button id="generateBtn" onclick="generateTasks()" class="w-full bg-purple-500 text-white p-3 rounded-xl font-bold hover:bg-purple-600 transition shadow-md">
-                    <i class="fas fa-magic mr-2"></i>Tạo Bài Tập Mới
-                </button>
-            </aside>
-
-            <section class="xl:col-span-3 space-y-6">
-                <div class="bg-white rounded-3xl shadow-lg p-5 border border-sky-100">
-                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
-                        <h3 class="font-bold text-xl text-gray-800"><i class="fas fa-user-friends mr-2"></i>Quản Lý Bé</h3>
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <input id="newStudentName" type="text" placeholder="Tên bé mới" class="p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
-                            <button onclick="addStudent()" class="bg-green-500 text-white px-4 py-3 rounded-xl hover:bg-green-600 font-medium">
-                                <i class="fas fa-plus mr-1"></i>Thêm bé
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col md:flex-row md:items-center gap-3">
-                        <label class="text-sm font-medium text-gray-600">Chọn bé:</label>
-                        <select id="studentSelect" class="w-full md:max-w-sm p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400"></select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div class="bg-sky-50 rounded-2xl p-4 text-center border border-sky-100">
-                        <div id="statTotal" class="font-bold text-2xl text-sky-600">0</div>
-                        <div class="text-gray-500">Tổng</div>
-                    </div>
-                    <div class="bg-yellow-50 rounded-2xl p-4 text-center border border-yellow-100">
-                        <div id="statSubmitted" class="font-bold text-2xl text-yellow-600">0</div>
-                        <div class="text-gray-500">Đã nộp</div>
-                    </div>
-                    <div class="bg-green-50 rounded-2xl p-4 text-center border border-green-100">
-                        <div id="statGraded" class="font-bold text-2xl text-green-600">0</div>
-                        <div class="text-gray-500">Đã chấm</div>
-                    </div>
-                    <div class="bg-orange-50 rounded-2xl p-4 text-center border border-orange-100">
-                        <div id="statStars" class="font-bold text-2xl text-orange-600">0</div>
-                        <div class="text-gray-500">Sao</div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-3xl shadow-lg p-5 border border-sky-100">
-                    <h3 class="font-bold text-xl text-gray-800 mb-4"><i class="fas fa-trophy mr-2"></i>Bảng Xếp Hạng</h3>
-                    <div id="leaderboard" class="space-y-3"></div>
-                </div>
-
-                <div class="bg-white rounded-3xl shadow-lg p-5 border border-sky-100">
-                    <h3 class="font-bold text-xl text-gray-800 mb-4"><i class="fas fa-tasks mr-2"></i>Danh Sách Bài Đã Giao</h3>
-                    <div id="parentTaskList" class="space-y-4"></div>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <main id="studentDashboard" class="hidden max-w-5xl mx-auto px-4 py-6 md:py-8">
-        <div class="bg-white rounded-3xl shadow-xl border-4 border-green-200 p-5 md:p-7">
-            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
-                <h2 class="text-2xl md:text-3xl font-extrabold text-green-600 text-center md:text-left">🌟 BÀI TẬP CỦA CON 🌟</h2>
-                <div class="bg-orange-50 border border-orange-200 rounded-full px-4 py-2 text-orange-700 font-bold">
-                    <i class="fas fa-star mr-1"></i><span id="studentStars">0</span> sao
-                </div>
-            </div>
-            <div id="studentTaskList" class="space-y-6"></div>
-        </div>
-    </main>
-
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import {
-            getFirestore,
-            collection,
-            doc,
-            setDoc,
-            onSnapshot,
-            query,
-            orderBy,
-            serverTimestamp
-        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
-
-        const FIREBASE_CONFIG = {
-            apiKey: 'YOUR_API_KEY',
-            authDomain: 'your-project.firebaseapp.com',
-            projectId: 'your-project-id',
-            storageBucket: 'your-project-id.appspot.com',
-            messagingSenderId: '1234567890',
-            appId: '1:1234567890:web:abc123def456'
-        };
-
-        const FAMILY_PREFIX = 'giaobai_family';
-        const FAMILY_TASKS_KEY = 'giaobai_family_tasks';
-
-        let currentUser = null;
-        let currentRole = null;
-        let familyCode = null;
-        let currentChild = null;
-        let db = null;
-        let unsubscribe = null;
-
-        const isFirebaseReady = isValidFirebaseConfig(FIREBASE_CONFIG);
-        if (isFirebaseReady) {
-            try {
-                const app = initializeApp(FIREBASE_CONFIG);
-                db = getFirestore(app);
-            } catch (error) {
-                console.warn('Firebase init failed, fallback to localStorage:', error);
-            }
-        }
-
-        function isValidFirebaseConfig(config) {
-            return !!config &&
-                config.apiKey &&
-                config.apiKey !== 'YOUR_API_KEY' &&
-                config.projectId &&
-                config.projectId !== 'your-project-id';
-        }
-
-        function getFamilyStorageKey() {
-            return `${FAMILY_PREFIX}_${(familyCode || 'default').toUpperCase()}`;
-        }
-
-        function getFamilyData() {
-            const raw = localStorage.getItem(getFamilyStorageKey());
-            if (!raw) {
-                return {
-                    familyCode: familyCode || 'DEFAULT',
-                    students: {},
-                    tasks: [],
-                    lastSelectedChild: null
-                };
-            }
-            try {
-                return JSON.parse(raw);
-            } catch {
-                return { familyCode: familyCode || 'DEFAULT', students: {}, tasks: [], lastSelectedChild: null };
-            }
-        }
-
-        function saveFamilyData(data) {
-            localStorage.setItem(getFamilyStorageKey(), JSON.stringify(data));
-        }
-
-        function ensureStudent(studentName) {
-            const state = getFamilyData();
-            const name = studentName ? studentName.trim() : '';
-            if (!name) return null;
-            if (!state.students[name]) {
-                state.students[name] = {
-                    name,
-                    stars: 0,
-                    score: 0,
-                    lastUpdated: new Date().toISOString()
-                };
-            }
-            saveFamilyData(state);
-            return name;
-        }
-
-        function getStudentsList() {
-            const state = getFamilyData();
-            return Object.values(state.students || {}).sort((a, b) => a.name.localeCompare(b.name));
-        }
-
-        function updateSelectedStudent() {
-            const state = getFamilyData();
-            const students = getStudentsList();
-            const select = document.getElementById('studentSelect');
-            if (!select) return;
-
-            const value = currentChild || state.lastSelectedChild || students[0]?.name || '';
-            currentChild = value;
-            state.lastSelectedChild = value;
-            saveFamilyData(state);
-            select.innerHTML = '';
-
-            if (!students.length) {
-                select.innerHTML = '<option value="">Chưa có bé nào</option>';
-                return;
-            }
-
-            students.forEach(student => {
-                const option = document.createElement('option');
-                option.value = student.name;
-                option.textContent = student.name;
-                if (student.name === value) option.selected = true;
-                select.appendChild(option);
-            });
-        }
-
-        function getCurrentStudentInfo() {
-            const studentName = currentChild || currentUser || '';
-            const state = getFamilyData();
-            return state.students?.[studentName] || { name: studentName, stars: 0, score: 0 };
-        }
-
-        function updateCoinDisplay() {
-            const coinDisplay = document.getElementById('coinDisplay');
-            const coinCount = document.getElementById('coinCount');
-            const student = getCurrentStudentInfo();
-            if (coinCount) coinCount.textContent = String(student.stars || 0);
-            if (coinDisplay && currentRole === 'student') coinDisplay.classList.remove('hidden');
-        }
-
-        function escapeHtml(value = '') {
-            return String(value)
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/\"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
-        function setTaskStats(tasks) {
-            const total = tasks.length;
-            const submitted = tasks.filter(item => item.status === 'submitted').length;
-            const graded = tasks.filter(item => item.status === 'graded').length;
-            const stars = tasks.reduce((sum, item) => sum + (Number(item.rewardStars) || 0), 0);
-
-            const totalEl = document.getElementById('statTotal');
-            const submittedEl = document.getElementById('statSubmitted');
-            const gradedEl = document.getElementById('statGraded');
-            const starsEl = document.getElementById('statStars');
-
-            if (totalEl) totalEl.textContent = total;
-            if (submittedEl) submittedEl.textContent = submitted;
-            if (gradedEl) gradedEl.textContent = graded;
-            if (starsEl) starsEl.textContent = stars;
-        }
-
-        function renderLeaderboard() {
-            const leaderboardEl = document.getElementById('leaderboard');
-            if (!leaderboardEl) return;
-            const state = getFamilyData();
-            const students = getStudentsList();
-
-            leaderboardEl.innerHTML = '';
-            if (!students.length) {
-                leaderboardEl.innerHTML = '<p class="empty-state">Chưa có bé nào trong gia đình.</p>';
-                return;
-            }
-
-            const ordered = [...students].sort((a, b) => (b.stars || 0) - (a.stars || 0));
-            ordered.forEach((student, index) => {
-                const row = document.createElement('div');
-                row.className = 'flex items-center justify-between p-3 rounded-xl border border-sky-100 bg-sky-50';
-                row.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-sky-400 to-purple-500 text-white flex items-center justify-center font-bold">${index + 1}</div>
-                        <div>
-                            <div class="font-semibold text-gray-800">${escapeHtml(student.name)}</div>
-                            <div class="text-xs text-gray-500">Điểm tích lũy</div>
-                        </div>
-                    </div>
-                    <div class="font-bold text-orange-600"><i class="fas fa-star mr-1"></i>${student.stars || 0}</div>
-                `;
-                leaderboardEl.appendChild(row);
-            });
-        }
-
-        function renderTasks(tasks = getFamilyData().tasks || []) {
-            const parentList = document.getElementById('parentTaskList');
-            const studentList = document.getElementById('studentTaskList');
-
-            if (!parentList || !studentList) return;
-
-            parentList.innerHTML = '';
-            studentList.innerHTML = '';
-
-            if (!tasks.length) {
-                parentList.innerHTML = '<p class="empty-state">Chưa có bài tập nào được giao.</p>';
-                studentList.innerHTML = '<p class="empty-state">Chưa có bài tập nào cho con.</p>';
-                return;
-            }
-
-            const filteredTasks = currentRole === 'parent' && currentChild
-                ? tasks.filter(task => task.studentName === currentChild)
-                : tasks;
-
-            if (!filteredTasks.length) {
-                parentList.innerHTML = '<p class="empty-state">Bé này chưa có bài tập nào.</p>';
-                studentList.innerHTML = '<p class="empty-state">Chưa có bài tập nào dành cho bạn.</p>';
-                return;
-            }
-
-            filteredTasks.forEach((task) => {
-                const status = task.status || 'assigned';
-                const statusColor = status === 'assigned' ? 'bg-gray-500' : status === 'submitted' ? 'bg-yellow-500' : 'bg-green-500';
-                const subjectName = escapeHtml(task.subject || 'Bài tập');
-                const contentHtml = escapeHtml(task.content || '');
-                const answerHtml = escapeHtml(task.answer || '');
-                const feedbackHtml = escapeHtml(task.feedback || '');
-                const studentNameHtml = escapeHtml(task.studentName || 'Tất cả');
-
-                if (currentRole === 'student') {
-                    studentList.insertAdjacentHTML('beforeend', `
-                        <div class="task-card p-5 border-2 rounded-2xl ${status === 'graded' ? 'border-green-300 bg-green-50' : 'border-sky-300 bg-white'}">
-                            <div class="flex items-center justify-between gap-2 mb-3">
-                                <h4 class="font-bold text-lg text-sky-600">Môn: ${subjectName}</h4>
-                                <span class="status-pill ${statusColor}">${status}</span>
-                            </div>
-                            <div class="whitespace-pre-line leading-loose text-gray-700 font-medium mb-4">${contentHtml}</div>
-                            ${status === 'assigned' ? `
-                                <textarea id="ans_${task.id}" rows="3" placeholder="Nhập câu trả lời của con vào đây nhé..." class="w-full p-3 border-2 border-dashed border-sky-300 rounded-xl mb-3 focus:outline-none focus:border-sky-500"></textarea>
-                                <button onclick="submitTask('${task.id}')" class="bg-sky-500 text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-sky-600">
-                                    Nộp Bài <i class="fas fa-paper-plane"></i>
-                                </button>
-                            ` : `
-                                <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
-                                    <p class="font-bold text-gray-700">Bài làm của con:</p>
-                                    <p class="whitespace-pre-line text-gray-600 leading-relaxed">${answerHtml || 'Chưa có câu trả lời.'}</p>
-                                    <p class="font-bold text-purple-600 mt-2">Nhận xét: ${feedbackHtml || 'Chờ ba mẹ chấm...'}</p>
-                                </div>
-                            `}
-                        </div>
-                    `);
-                }
-
-                if (currentRole === 'parent') {
-                    parentList.insertAdjacentHTML('beforeend', `
-                        <div class="task-card p-4 border border-sky-100 rounded-2xl bg-gray-50">
-                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                                <h4 class="font-bold text-sky-700">Môn: ${subjectName}</h4>
-                                <span class="status-pill ${statusColor}">${status}</span>
-                            </div>
-                            <div class="text-xs text-gray-500 mb-2">Cho bé: <span class="font-semibold">${studentNameHtml}</span></div>
-                            <div class="whitespace-pre-line leading-relaxed text-sm text-gray-600 mb-3">${contentHtml}</div>
-
-                            ${status === 'submitted' || status === 'graded' ? `
-                                <div class="mt-3 p-3 bg-white border rounded-xl">
-                                    <p class="text-sm font-semibold text-gray-700">Bé trả lời:</p>
-                                    <p class="text-sm italic whitespace-pre-line text-gray-700 mt-1">${answerHtml || 'Chưa có câu trả lời.'}</p>
-
-                                    <div class="mt-3 flex flex-wrap gap-2">
-                                        <button onclick="aiGrade('${task.id}')" class="bg-purple-100 text-purple-700 px-3 py-1 rounded-lg text-sm hover:bg-purple-200">
-                                            <i class="fas fa-magic mr-1"></i>AI Chấm Thử
-                                        </button>
-                                        <button onclick="giveReward('${task.id}')" class="bg-orange-100 text-orange-700 px-3 py-1 rounded-lg text-sm hover:bg-orange-200">
-                                            <i class="fas fa-star mr-1"></i>Tặng Sao/Tiền ảo
-                                        </button>
-                                    </div>
-
-                                    <textarea id="fb_${task.id}" class="w-full mt-3 p-2 text-sm border rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" placeholder="Nhận xét chốt lại của ba mẹ...">${feedbackHtml}</textarea>
-                                    <button onclick="saveFeedback('${task.id}')" class="mt-2 bg-sky-600 text-white px-3 py-2 rounded-xl hover:bg-sky-700 text-sm font-medium">
-                                        <i class="fas fa-save mr-1"></i>Lưu nhận xét
-                                    </button>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `);
-                }
-            });
-        }
-
-        function renderAll() {
-            const state = getFamilyData();
-            const tasks = state.tasks || [];
-            setTaskStats(tasks);
-            renderLeaderboard();
-            renderTasks(tasks);
-            updateSelectedStudent();
-            updateCoinDisplay();
-            const studentStars = document.getElementById('studentStars');
-            if (studentStars) {
-                const s = getCurrentStudentInfo();
-                studentStars.textContent = s.stars || 0;
-            }
-        }
-
-        function login(role) {
-            const code = document.getElementById('familyCode').value.trim().toUpperCase();
-            const name = document.getElementById('username').value.trim();
-            const studentName = document.getElementById('studentNameInput').value.trim();
-
-            if (!code || !name) {
-                alert('Vui lòng nhập đủ Mã gia đình và Tên!');
-                return;
-            }
-
-            familyCode = code;
-            currentRole = role;
-            currentUser = name;
-
-            const state = getFamilyData();
-            if (role === 'parent') {
-                if (studentName) {
-                    const created = ensureStudent(studentName);
-                    if (created) {
-                        currentChild = created;
-                        state.lastSelectedChild = created;
-                        saveFamilyData(state);
-                    }
-                } else {
-                    const students = Object.keys(state.students || {});
-                    currentChild = students[0] || null;
-                    state.lastSelectedChild = currentChild;
-                    saveFamilyData(state);
-                }
-            } else {
-                const selected = ensureStudent(name) || studentName || name;
-                currentChild = selected;
-                state.lastSelectedChild = selected;
-                saveFamilyData(state);
-            }
-
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('userInfo').classList.remove('hidden');
-            document.getElementById('userNameDisplay').textContent = `Xin chào, ${name}`;
-
-            if (role === 'parent') {
-                document.getElementById('parentDashboard').classList.remove('hidden');
-                document.getElementById('studentDashboard').classList.add('hidden');
-            } else {
-                document.getElementById('studentDashboard').classList.remove('hidden');
-                document.getElementById('parentDashboard').classList.add('hidden');
-                document.getElementById('coinDisplay').classList.remove('hidden');
-            }
-
-            if (db) {
-                subscribeFirebase();
-            } else {
-                renderAll();
-            }
-        }
-
-        function logout() {
-            currentUser = null;
-            currentRole = null;
-            familyCode = null;
-            currentChild = null;
-            if (unsubscribe) unsubscribe();
-            location.reload();
-        }
-
-        function addStudent() {
-            const nameInput = document.getElementById('newStudentName');
-            const studentName = nameInput.value.trim();
-            if (!studentName) {
-                alert('Nhập tên bé trước khi thêm');
-                return;
-            }
-
-            const state = getFamilyData();
-            const student = ensureStudent(studentName);
-            if (!student) return;
-            currentChild = student;
-            state.lastSelectedChild = student;
-            saveFamilyData(state);
-            nameInput.value = '';
-            renderAll();
-        }
-
-        async function generateTasks() {
-            if (!familyCode) {
-                alert('Bạn cần đăng nhập trước khi tạo bài!');
-                return;
-            }
-
-            const apiKey = document.getElementById('geminiApiKey').value.trim();
-            if (!apiKey) {
-                alert('Vui lòng nhập Gemini API Key để AI soạn bài!');
-                return;
-            }
-
-            const subject = document.getElementById('subject').value;
-            const count = Number(document.getElementById('questionCount').value || 1);
-            const promptExtra = document.getElementById('aiPrompt').value.trim();
-            const btn = document.getElementById('generateBtn');
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang soạn...';
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Đóng vai giáo viên tiểu học. Hãy soạn ${count} câu hỏi bài tập môn ${subject} cho học sinh lớp 2. Yêu cầu: trình bày rõ ràng, dễ hiểu, mỗi câu hỏi cách nhau bằng một dòng trống. ${promptExtra}` }] }]
-                    })
-                });
-
-                const data = await response.json();
-                if (!response.ok || !data.candidates?.[0]?.content?.parts?.[0]?.text) {
-                    throw new Error(data?.error?.message || 'Không thể tạo bài tập từ Gemini.');
-                }
-
-                const taskContent = data.candidates[0].content.parts[0].text.trim();
-                const taskId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-                const state = getFamilyData();
-                const targetStudent = currentChild || getStudentsList()[0]?.name || currentUser || 'Tất cả';
-                const task = {
-                    id: taskId,
-                    subject,
-                    content: taskContent,
-                    answer: '',
-                    status: 'assigned',
-                    feedback: '',
-                    rewardStars: 0,
-                    studentName: targetStudent,
-                    createdAt: new Date().toISOString()
-                };
-
-                state.tasks = [task, ...(state.tasks || [])];
-                saveFamilyData(state);
-                renderAll();
-
-                if (db && familyCode) {
-                    await createTaskInStore(task);
-                }
-
-                document.getElementById('aiPrompt').value = '';
-            } catch (error) {
-                alert('Lỗi tạo bài tập: ' + (error.message || error));
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-magic mr-2"></i>Tạo Bài Tập Mới';
-            }
-        }
-
-        async function createTaskInStore(task) {
-            if (!db || !familyCode) return;
-            try {
-                await setDoc(doc(db, `families/${familyCode}/tasks`, task.id), {
-                    ...task,
-                    createdAt: serverTimestamp()
-                });
-            } catch (error) {
-                console.warn('Firestore write failed:', error);
-            }
-        }
-
-        function subscribeFirebase() {
-            if (!db || !familyCode) return;
-            const tasksRef = query(collection(db, `families/${familyCode}/tasks`), orderBy('createdAt', 'desc'));
-            if (unsubscribe) unsubscribe();
-
-            unsubscribe = onSnapshot(tasksRef, (snapshot) => {
-                const state = getFamilyData();
-                const tasks = [];
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    tasks.push({
-                        ...data,
-                        id: docSnap.id,
-                        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : (data.createdAt || new Date().toISOString())
-                    });
-                });
-                state.tasks = tasks;
-                saveFamilyData(state);
-                renderAll();
-            }, (error) => {
-                console.warn('Firestore listener failed:', error);
-                renderAll();
-            });
-        }
-
-        function updateFamilyStudentStars(taskId, starsAward = 0) {
-            const state = getFamilyData();
-            const task = (state.tasks || []).find(item => item.id === taskId);
-            if (!task || !task.studentName) return;
-            const student = state.students[task.studentName];
-            if (!student) return;
-            student.stars = (Number(student.stars) || 0) + Number(starsAward || 0);
-            student.score = student.stars;
-            student.lastUpdated = new Date().toISOString();
-            saveFamilyData(state);
-        }
-
-        async function submitTask(taskId) {
-            const answer = document.getElementById(`ans_${taskId}`)?.value.trim();
-            if (!answer) {
-                alert('Con chưa nhập câu trả lời kìa!');
-                return;
-            }
-
-            const state = getFamilyData();
-            state.tasks = (state.tasks || []).map(task => task.id === taskId ? { ...task, answer, status: 'submitted' } : task);
-            saveFamilyData(state);
-            renderAll();
-
-            if (db && familyCode) {
-                try {
-                    await setDoc(doc(db, `families/${familyCode}/tasks`, taskId), { answer, status: 'submitted' }, { merge: true });
-                } catch (error) {
-                    console.warn('Submit sync failed:', error);
-                }
-            }
-        }
-
-        async function saveFeedback(taskId) {
-            const feedback = document.getElementById(`fb_${taskId}`)?.value.trim() || '';
-            const state = getFamilyData();
-            state.tasks = (state.tasks || []).map(task => task.id === taskId ? { ...task, feedback } : task);
-            saveFamilyData(state);
-            renderAll();
-
-            if (db && familyCode) {
-                try {
-                    await setDoc(doc(db, `families/${familyCode}/tasks`, taskId), { feedback }, { merge: true });
-                } catch (error) {
-                    console.warn('Save feedback failed:', error);
-                }
-            }
-        }
-
-        function giveReward(taskId) {
-            const state = getFamilyData();
-            const task = (state.tasks || []).find(item => item.id === taskId);
-            if (!task) return;
-
-            const rewardStars = 10;
-            task.rewardStars = rewardStars;
-            task.status = 'graded';
-            if (!task.feedback) task.feedback = 'Đã nhận 10 sao vì hoàn thành tốt!';
-
-            const student = state.students[task.studentName];
-            if (student) {
-                student.stars = (Number(student.stars) || 0) + rewardStars;
-                student.score = student.stars;
-                student.lastUpdated = new Date().toISOString();
-            }
-
-            saveFamilyData(state);
-            renderAll();
-
-            if (db && familyCode) {
-                setDoc(doc(db, `families/${familyCode}/tasks`, taskId), {
-                    rewardStars,
-                    status: 'graded',
-                    feedback: task.feedback
-                }, { merge: true }).catch(console.warn);
-            }
-        }
-
-        async function aiGrade(taskId) {
-            const state = getFamilyData();
-            const task = (state.tasks || []).find(item => item.id === taskId);
-            if (!task || !task.answer) {
-                alert('Chưa có bài làm để chấm.');
-                return;
-            }
-
-            const apiKey = document.getElementById('geminiApiKey').value.trim();
-            if (!apiKey) {
-                alert('Vui lòng nhập Gemini API Key trước khi chấm AI!');
-                return;
-            }
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `Bạn là giáo viên tiểu học. Hãy chấm bài làm của học sinh theo đề bài dưới đây. Viết ngắn gọn, tích cực, dễ hiểu cho trẻ. Đưa ra nhận xét 2-3 câu, khen ngợi và gợi ý sửa.\n\nĐề bài:\n${task.content}\n\nBài làm của học sinh:\n${task.answer}` }] }]
-                    })
-                });
-
-                const data = await response.json();
-                if (!response.ok || !data.candidates?.[0]?.content?.parts?.[0]?.text) {
-                    throw new Error(data?.error?.message || 'Không thể chấm bài bằng AI.');
-                }
-
-                const result = data.candidates[0].content.parts[0].text.trim();
-                task.feedback = result;
-                task.status = 'graded';
-
-                const student = state.students[task.studentName];
-                if (student) {
-                    student.stars = (Number(student.stars) || 0) + 5;
-                    student.score = student.stars;
-                    student.lastUpdated = new Date().toISOString();
-                }
-
-                saveFamilyData(state);
-                renderAll();
-
-                if (db && familyCode) {
-                    await setDoc(doc(db, `families/${familyCode}/tasks`, taskId), {
-                        feedback: result,
-                        status: 'graded'
-                    }, { merge: true });
-                }
-            } catch (error) {
-                alert('Lỗi chấm AI: ' + (error.message || error));
-            }
-        }
-
-        function bindStudentSelect() {
-            const select = document.getElementById('studentSelect');
-            if (!select) return;
-            select.onchange = (event) => {
-                currentChild = event.target.value || null;
-                const state = getFamilyData();
-                state.lastSelectedChild = currentChild;
-                saveFamilyData(state);
-                renderAll();
-            };
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            bindStudentSelect();
-            renderAll();
+        <div class="bg-white rounded-3xl shadow p-5"><h2 class="font-bold text-xl mb-4"><i class="fas fa-trophy mr-2 text-orange-500"></i>Bảng xếp hạng</h2><div id="leaderboard" class="space-y-2"></div></div>
+        <div class="bg-white rounded-3xl shadow p-5"><h2 class="font-bold text-xl mb-4"><i class="fas fa-history mr-2"></i>Lịch sử bài tập</h2><div id="parentTaskList" class="space-y-4"></div></div>
+      </section>
+    </div>
+  </main>
+
+  <main id="studentDashboard" class="hidden max-w-5xl mx-auto p-4 md:py-8">
+    <section class="bg-white rounded-3xl shadow-xl border-4 border-green-200 p-5 md:p-7">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6"><h2 class="text-2xl font-extrabold text-green-600">🌟 BÀI TẬP CỦA CON 🌟</h2><div class="bg-orange-50 border border-orange-200 rounded-full px-4 py-2 text-orange-700 font-bold"><i class="fas fa-star mr-1"></i><span id="studentStars">0</span> sao</div></div>
+      <div id="studentTaskList" class="space-y-5"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getFirestore, collection, doc, setDoc, onSnapshot, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+    // Firebase Web App config from the project you supplied.
+    const firebaseConfig = {
+      apiKey: 'AIzaSyAB21fpOg3z2h8-K35ybDPvfE9DVATJixs',
+      authDomain: 'planning-with-ai-38ae5.firebaseapp.com',
+      projectId: 'planning-with-ai-38ae5',
+      storageBucket: 'planning-with-ai-38ae5.firebasestorage.app',
+      messagingSenderId: '499013875976',
+      appId: '1:499013875976:web:1b3c718aec8fda51ad54bd'
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const LOCAL_PREFIX = 'giaobai_family_';
+    let familyCode = '';
+    let currentUser = '';
+    let currentRole = '';
+    let currentChild = '';
+    let unsubscribeTasks = null;
+    let unsubscribeStudents = null;
+
+    function storageKey(){ return LOCAL_PREFIX + familyCode; }
+    function getState(){
+      try { return JSON.parse(localStorage.getItem(storageKey())) || {students:{},tasks:[],lastSelectedChild:''}; }
+      catch { return {students:{},tasks:[],lastSelectedChild:''}; }
+    }
+    function saveState(state){ localStorage.setItem(storageKey(), JSON.stringify(state)); }
+    function escapeHtml(value=''){
+      return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+    function students(){ return Object.values(getState().students || {}).sort((a,b)=>a.name.localeCompare(b.name,'vi')); }
+    function setStudent(name){
+      const state=getState();
+      if(!name) return;
+      if(!state.students[name]) state.students[name]={name,stars:0};
+      state.lastSelectedChild=name;
+      saveState(state);
+    }
+    function taskRef(taskId){ return doc(db, `families/${familyCode}/tasks`, taskId); }
+
+    function render(){
+      const state=getState();
+      const tasks=state.tasks || [];
+      const selected=currentRole==='parent' ? currentChild : currentUser;
+      const visibleTasks=currentRole==='parent' ? tasks.filter(t=>!currentChild || t.studentName===currentChild) : tasks.filter(t=>t.studentName===currentUser);
+      const parentList=document.getElementById('parentTaskList');
+      const studentList=document.getElementById('studentTaskList');
+      const select=document.getElementById('studentSelect');
+      if(select){
+        const list=students();
+        select.innerHTML=list.length ? list.map(s=>`<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`).join('') : '<option value="">Chưa có học sinh</option>';
+        if(currentChild && list.some(s=>s.name===currentChild)) select.value=currentChild;
+      }
+      const board=document.getElementById('leaderboard');
+      if(board){
+        const list=students().sort((a,b)=>(b.stars||0)-(a.stars||0));
+        board.innerHTML=list.length ? list.map((s,i)=>`<div class="flex justify-between items-center p-3 rounded-xl bg-sky-50 border border-sky-100"><span><b class="inline-flex w-7 h-7 rounded-full bg-sky-500 text-white items-center justify-center mr-2">${i+1}</b>${escapeHtml(s.name)}</span><b class="text-orange-600"><i class="fas fa-star mr-1"></i>${s.stars||0}</b></div>`).join('') : '<p class="text-gray-500 italic">Chưa có học sinh nào.</p>';
+      }
+      document.getElementById('statTotal').textContent=visibleTasks.length;
+      document.getElementById('statSubmitted').textContent=visibleTasks.filter(t=>t.status==='submitted').length;
+      document.getElementById('statGraded').textContent=visibleTasks.filter(t=>t.status==='graded').length;
+      document.getElementById('statStars').textContent=visibleTasks.reduce((n,t)=>n+(Number(t.rewardStars)||0),0);
+      const student=getState().students?.[currentUser] || {stars:0};
+      document.getElementById('studentStars').textContent=student.stars||0;
+
+      if(parentList){
+        parentList.innerHTML=visibleTasks.length ? '' : '<p class="text-gray-500 italic">Chưa có bài tập cho bé này.</p>';
+        visibleTasks.forEach(task=>{
+          const status=task.status||'assigned';
+          const color=status==='assigned'?'bg-gray-500':status==='submitted'?'bg-yellow-500':'bg-green-500';
+          parentList.insertAdjacentHTML('beforeend',`<article class="card p-4 border rounded-2xl bg-gray-50"><div class="flex justify-between gap-3"><h3 class="font-bold text-sky-700">${escapeHtml(task.subject)}</h3><span class="status ${color}">${escapeHtml(status)}</span></div><p class="text-xs text-gray-500 mt-1">Học sinh: ${escapeHtml(task.studentName||'')}</p><div class="whitespace-pre-line my-3 text-sm">${escapeHtml(task.content||'')}</div>${status!=='assigned'?`<div class="p-3 bg-white border rounded-xl"><b>Bài làm:</b><p class="whitespace-pre-line">${escapeHtml(task.answer||'')}</p><p class="mt-2 text-purple-700"><b>Nhận xét:</b> ${escapeHtml(task.feedback||'Chưa có nhận xét')}</p><textarea id="fb_${escapeHtml(task.id)}" class="w-full mt-3 p-2 border rounded-lg" placeholder="Nhận xét của phụ huynh">${escapeHtml(task.feedback||'')}</textarea><div class="flex flex-wrap gap-2 mt-2"><button onclick="saveFeedback('${escapeHtml(task.id)}')" class="bg-sky-600 text-white px-3 py-2 rounded-lg text-sm">Lưu nhận xét</button><button onclick="aiGrade('${escapeHtml(task.id)}')" class="bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm">AI chấm thử</button><button onclick="giveReward('${escapeHtml(task.id)}')" class="bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm">Tặng 10 sao</button></div></div>`:''}</article>`);
         });
+      }
+      if(studentList){
+        studentList.innerHTML=visibleTasks.length ? '' : '<p class="text-gray-500 italic">Chưa có bài tập nào cho con.</p>';
+        visibleTasks.forEach(task=>{
+          const status=task.status||'assigned';
+          const color=status==='assigned'?'bg-gray-500':status==='submitted'?'bg-yellow-500':'bg-green-500';
+          studentList.insertAdjacentHTML('beforeend',`<article class="card p-5 border-2 rounded-2xl ${status==='graded'?'border-green-300 bg-green-50':'border-sky-300 bg-white'}"><div class="flex justify-between gap-3"><h3 class="font-bold text-lg text-sky-600">${escapeHtml(task.subject)}</h3><span class="status ${color}">${escapeHtml(status)}</span></div><div class="whitespace-pre-line leading-loose my-4">${escapeHtml(task.content||'')}</div>${status==='assigned'?`<textarea id="ans_${escapeHtml(task.id)}" rows="3" class="w-full p-3 border-2 border-dashed border-sky-300 rounded-xl mb-3" placeholder="Nhập câu trả lời của con"></textarea><button onclick="submitTask('${escapeHtml(task.id)}')" class="bg-sky-500 text-white px-5 py-2 rounded-full font-bold">Nộp bài <i class="fas fa-paper-plane"></i></button>`:`<div class="bg-yellow-50 p-4 rounded-xl"><b>Bài làm của con:</b><p class="whitespace-pre-line">${escapeHtml(task.answer||'')}</p><p class="mt-2 text-purple-700"><b>Nhận xét:</b> ${escapeHtml(task.feedback||'Chờ ba mẹ chấm')}</p></div>`}</article>`);
+        });
+      }
+    }
 
-        window.login = login;
-        window.logout = logout;
-        window.addStudent = addStudent;
-        window.generateTasks = generateTasks;
-        window.submitTask = submitTask;
-        window.saveFeedback = saveFeedback;
-        window.giveReward = giveReward;
-        window.aiGrade = aiGrade;
-    </script>
+    function watchData(){
+      if(unsubscribeTasks) unsubscribeTasks();
+      if(unsubscribeStudents) unsubscribeStudents();
+      const tasksQuery=query(collection(db,`families/${familyCode}/tasks`),orderBy('createdAt','desc'));
+      unsubscribeTasks=onSnapshot(tasksQuery,snapshot=>{
+        const state=getState();
+        state.tasks=snapshot.docs.map(d=>({...d.data(),id:d.id,createdAt:d.data().createdAt?.toDate?.().toISOString()||d.data().createdAt||''}));
+        saveState(state); render();
+      },error=>{console.error(error); alert('Không đọc được Firestore. Kiểm tra Firestore đã bật và Security Rules. Dữ liệu cục bộ vẫn được giữ.'); render();});
+      unsubscribeStudents=onSnapshot(doc(db,`families/${familyCode}/meta`,`students`),snapshot=>{
+        if(snapshot.exists()){
+          const state=getState();
+          state.students={...state.students,...(snapshot.data().students||{})};
+          saveState(state); render();
+        }
+      },error=>console.warn('Student sync failed:',error));
+    }
+
+    async function syncTask(taskId,patch){
+      try{await setDoc(taskRef(taskId),patch,{merge:true});}
+      catch(error){console.error(error);alert('Đồng bộ Firebase chưa thành công. Hãy kiểm tra Firestore Security Rules.');}
+    }
+    async function syncStudents(){
+      try{await setDoc(doc(db,`families/${familyCode}/meta`,`students`),{students:getState().students},{merge:true});}
+      catch(error){console.error(error);alert('Không đồng bộ được danh sách học sinh. Kiểm tra Firestore Security Rules.');}
+    }
+
+    function login(role){
+      const code=document.getElementById('familyCode').value.trim().toUpperCase();
+      const name=document.getElementById('username').value.trim();
+      if(!code||!name){alert('Vui lòng nhập mã gia đình và tên.');return;}
+      familyCode=code; currentUser=name; currentRole=role;
+      if(role==='student'){currentChild=name;setStudent(name);}
+      else {const state=getState();currentChild=state.lastSelectedChild||students()[0]?.name||'';}
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById(role==='parent'?'parentDashboard':'studentDashboard').classList.remove('hidden');
+      const info=document.getElementById('userInfo');info.classList.remove('hidden');info.classList.add('flex');
+      document.getElementById('userNameDisplay').textContent=`Xin chào, ${name}`;
+      if(role==='parent'){
+        const select=document.getElementById('studentSelect');
+        select.onchange=()=>{currentChild=select.value;const state=getState();state.lastSelectedChild=currentChild;saveState(state);render();};
+      }
+      render(); watchData();
+      if(role==='student') syncStudents();
+    }
+    function logout(){if(unsubscribeTasks)unsubscribeTasks();if(unsubscribeStudents)unsubscribeStudents();location.reload();}
+    function addStudent(){
+      const input=document.getElementById('newStudentName');const name=input.value.trim();
+      if(!name){alert('Nhập tên bé trước.');return;}
+      const state=getState();if(!state.students[name])state.students[name]={name,stars:0};state.lastSelectedChild=name;saveState(state);currentChild=name;input.value='';render();syncStudents();
+    }
+    async function generateTasks(){
+      const key=document.getElementById('geminiApiKey').value.trim();
+      if(!key){alert('Nhập Gemini API key để tạo bài.');return;}
+      const count=Math.max(1,Math.min(20,Number(document.getElementById('questionCount').value)||1));
+      const subject=document.getElementById('subject').value;
+      const extra=document.getElementById('aiPrompt').value.trim();
+      const button=document.getElementById('generateBtn');button.disabled=true;button.textContent='Đang soạn...';
+      try{
+        const response=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:`Đóng vai giáo viên tiểu học. Soạn ${count} câu hỏi môn ${subject} cho học sinh lớp 2. Trình bày rõ ràng, mỗi câu cách nhau một dòng. ${extra}`}]}]})});
+        const data=await response.json();if(!response.ok||!data.candidates?.[0]?.content?.parts?.[0]?.text)throw new Error(data.error?.message||'Gemini không tạo được bài.');
+        const id=`${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        const task={id,subject,content:data.candidates[0].content.parts[0].text.trim(),answer:'',status:'assigned',feedback:'',rewardStars:0,studentName:currentChild||'Tất cả',createdAt:new Date().toISOString()};
+        const state=getState();state.tasks=[task,...(state.tasks||[])];saveState(state);render();
+        await setDoc(taskRef(id),{...task,createdAt:serverTimestamp()});
+        document.getElementById('aiPrompt').value='';
+      }catch(error){alert('Lỗi tạo bài: '+error.message);}
+      finally{button.disabled=false;button.innerHTML='<i class="fas fa-magic mr-2"></i>Tạo bài tập';}
+    }
+    async function submitTask(id){
+      const answer=document.getElementById(`ans_${id}`)?.value.trim();if(!answer){alert('Con chưa nhập câu trả lời.');return;}
+      const state=getState();state.tasks=state.tasks.map(t=>t.id===id?{...t,answer,status:'submitted'}:t);saveState(state);render();await syncTask(id,{answer,status:'submitted'});
+    }
+    async function saveFeedback(id){
+      const feedback=document.getElementById(`fb_${id}`)?.value.trim()||'';const state=getState();state.tasks=state.tasks.map(t=>t.id===id?{...t,feedback}:t);saveState(state);render();await syncTask(id,{feedback});
+    }
+    async function giveReward(id){
+      const state=getState();const task=state.tasks.find(t=>t.id===id);if(!task)return;
+      if(task.rewardStars){alert('Bài này đã được tặng sao rồi.');return;}
+      task.rewardStars=10;task.status='graded';task.feedback=task.feedback||'Đã nhận 10 sao vì hoàn thành tốt!';
+      const student=state.students[task.studentName];if(student)student.stars=(Number(student.stars)||0)+10;
+      saveState(state);render();await syncTask(id,{rewardStars:10,status:'graded',feedback:task.feedback});await syncStudents();
+    }
+    async function aiGrade(id){
+      const state=getState();const task=state.tasks.find(t=>t.id===id);const key=document.getElementById('geminiApiKey').value.trim();
+      if(!task?.answer){alert('Chưa có bài làm để chấm.');return;}if(!key){alert('Nhập Gemini API key trước khi chấm.');return;}
+      try{
+        const response=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:`Bạn là giáo viên tiểu học. Hãy nhận xét bài làm một cách tích cực, ngắn gọn, dễ hiểu, nêu điểm đúng và gợi ý sửa nếu cần.\nĐề bài:\n${task.content}\nBài làm:\n${task.answer}`}]}]})});
+        const data=await response.json();if(!response.ok||!data.candidates?.[0]?.content?.parts?.[0]?.text)throw new Error(data.error?.message||'Không chấm được bài.');
+        task.feedback=data.candidates[0].content.parts[0].text.trim();task.status='graded';saveState(state);render();await syncTask(id,{feedback:task.feedback,status:'graded'});
+      }catch(error){alert('Lỗi chấm AI: '+error.message);}
+    }
+
+    window.login=login;window.logout=logout;window.addStudent=addStudent;window.generateTasks=generateTasks;window.submitTask=submitTask;window.saveFeedback=saveFeedback;window.giveReward=giveReward;window.aiGrade=aiGrade;
+  </script>
 </body>
 </html>
