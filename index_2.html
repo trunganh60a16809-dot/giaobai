@@ -9,16 +9,28 @@
     <style>
         :root {
             --sky-50: #f0f9ff;
+            --sky-100: #e0f2fe;
+            --sky-400: #38bdf8;
             --sky-500: #0ea5e9;
             --sky-600: #0284c7;
             --green-500: #22c55e;
+            --green-600: #16a34a;
             --purple-500: #a855f7;
+            --purple-600: #9333ea;
             --orange-500: #f59e0b;
+            --orange-600: #d97706;
+            --gray-100: #f3f4f6;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             min-height: 100vh;
             background: linear-gradient(180deg, #f0f9ff 0%, #ecfeff 100%);
+            font-family: Arial, sans-serif;
         }
 
         .glass {
@@ -80,7 +92,8 @@
             </div>
 
             <input id="familyCode" type="text" placeholder="Mã gia đình (VD: GIADINH123)" class="w-full mb-4 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
-            <input id="username" type="text" placeholder="Tên của bạn (hoặc tên bé)" class="w-full mb-6 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
+            <input id="username" type="text" placeholder="Tên của bạn (hoặc tên bé)" class="w-full mb-4 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
+            <input id="studentNameInput" type="text" placeholder="Tên bé học sinh (nếu là phụ huynh thêm học sinh mới)" class="w-full mb-6 p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
 
             <div class="grid grid-cols-2 gap-4">
                 <button onclick="login('parent')" class="bg-sky-500 text-white p-3 rounded-xl hover:bg-sky-600 font-semibold shadow-md transition">
@@ -93,9 +106,10 @@
         </div>
     </main>
 
-    <main id="parentDashboard" class="hidden max-w-6xl mx-auto px-4 py-6 md:py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <aside class="lg:col-span-1 bg-white rounded-3xl shadow-lg p-5 border border-sky-100 h-fit">
+    <main id="parentDashboard" class="hidden max-w-7xl mx-auto px-4 py-6 md:py-8">
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <!-- AI generator -->
+            <aside class="xl:col-span-1 bg-white rounded-3xl shadow-lg p-5 border border-sky-100 h-fit">
                 <h3 class="font-bold text-xl text-sky-700 mb-4"><i class="fas fa-robot mr-2"></i>AI Soạn Bài</h3>
 
                 <label class="block text-sm font-medium text-gray-600 mb-2">API Gemini</label>
@@ -123,37 +137,64 @@
                 </button>
             </aside>
 
-            <section class="lg:col-span-2 bg-white rounded-3xl shadow-lg p-5 border border-sky-100">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
-                    <h3 class="font-bold text-xl text-gray-800"><i class="fas fa-tasks mr-2"></i>Danh Sách Bài Đã Giao</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-                        <div class="bg-sky-50 rounded-xl p-2 text-center border border-sky-100">
-                            <div id="statTotal" class="font-bold text-sky-600">0</div>
-                            <div class="text-gray-500">Tổng</div>
+            <section class="xl:col-span-3 space-y-6">
+                <div class="bg-white rounded-3xl shadow-lg p-5 border border-sky-100">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
+                        <h3 class="font-bold text-xl text-gray-800"><i class="fas fa-user-friends mr-2"></i>Quản Lý Bé</h3>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input id="newStudentName" type="text" placeholder="Tên bé mới" class="p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400" />
+                            <button onclick="addStudent()" class="bg-green-500 text-white px-4 py-3 rounded-xl hover:bg-green-600 font-medium">
+                                <i class="fas fa-plus mr-1"></i>Thêm bé
+                            </button>
                         </div>
-                        <div class="bg-yellow-50 rounded-xl p-2 text-center border border-yellow-100">
-                            <div id="statSubmitted" class="font-bold text-yellow-600">0</div>
-                            <div class="text-gray-500">Nộp</div>
-                        </div>
-                        <div class="bg-green-50 rounded-xl p-2 text-center border border-green-100">
-                            <div id="statGraded" class="font-bold text-green-600">0</div>
-                            <div class="text-gray-500">Đã chấm</div>
-                        </div>
-                        <div class="bg-orange-50 rounded-xl p-2 text-center border border-orange-100">
-                            <div id="statStars" class="font-bold text-orange-600">0</div>
-                            <div class="text-gray-500">Sao</div>
-                        </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row md:items-center gap-3">
+                        <label class="text-sm font-medium text-gray-600">Chọn bé:</label>
+                        <select id="studentSelect" class="w-full md:max-w-sm p-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-400"></select>
                     </div>
                 </div>
 
-                <div id="parentTaskList" class="space-y-4"></div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="bg-sky-50 rounded-2xl p-4 text-center border border-sky-100">
+                        <div id="statTotal" class="font-bold text-2xl text-sky-600">0</div>
+                        <div class="text-gray-500">Tổng</div>
+                    </div>
+                    <div class="bg-yellow-50 rounded-2xl p-4 text-center border border-yellow-100">
+                        <div id="statSubmitted" class="font-bold text-2xl text-yellow-600">0</div>
+                        <div class="text-gray-500">Đã nộp</div>
+                    </div>
+                    <div class="bg-green-50 rounded-2xl p-4 text-center border border-green-100">
+                        <div id="statGraded" class="font-bold text-2xl text-green-600">0</div>
+                        <div class="text-gray-500">Đã chấm</div>
+                    </div>
+                    <div class="bg-orange-50 rounded-2xl p-4 text-center border border-orange-100">
+                        <div id="statStars" class="font-bold text-2xl text-orange-600">0</div>
+                        <div class="text-gray-500">Sao</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-lg p-5 border border-sky-100">
+                    <h3 class="font-bold text-xl text-gray-800 mb-4"><i class="fas fa-trophy mr-2"></i>Bảng Xếp Hạng</h3>
+                    <div id="leaderboard" class="space-y-3"></div>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-lg p-5 border border-sky-100">
+                    <h3 class="font-bold text-xl text-gray-800 mb-4"><i class="fas fa-tasks mr-2"></i>Danh Sách Bài Đã Giao</h3>
+                    <div id="parentTaskList" class="space-y-4"></div>
+                </div>
             </section>
         </div>
     </main>
 
     <main id="studentDashboard" class="hidden max-w-5xl mx-auto px-4 py-6 md:py-8">
         <div class="bg-white rounded-3xl shadow-xl border-4 border-green-200 p-5 md:p-7">
-            <h2 class="text-2xl md:text-3xl font-extrabold text-green-600 mb-6 text-center">🌟 BÀI TẬP CỦA CON 🌟</h2>
+            <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-3 mb-6">
+                <h2 class="text-2xl md:text-3xl font-extrabold text-green-600 text-center md:text-left">🌟 BÀI TẬP CỦA CON 🌟</h2>
+                <div class="bg-orange-50 border border-orange-200 rounded-full px-4 py-2 text-orange-700 font-bold">
+                    <i class="fas fa-star mr-1"></i><span id="studentStars">0</span> sao
+                </div>
+            </div>
             <div id="studentTaskList" class="space-y-6"></div>
         </div>
     </main>
@@ -180,10 +221,17 @@
             appId: '1:1234567890:web:abc123def456'
         };
 
-        const isFirebaseReady = checkFirebaseConfig(FIREBASE_CONFIG);
+        const FAMILY_PREFIX = 'giaobai_family';
+        const FAMILY_TASKS_KEY = 'giaobai_family_tasks';
+
+        let currentUser = null;
+        let currentRole = null;
+        let familyCode = null;
+        let currentChild = null;
         let db = null;
         let unsubscribe = null;
 
+        const isFirebaseReady = isValidFirebaseConfig(FIREBASE_CONFIG);
         if (isFirebaseReady) {
             try {
                 const app = initializeApp(FIREBASE_CONFIG);
@@ -193,14 +241,7 @@
             }
         }
 
-        const STORAGE_KEY = 'giaobai_family_tasks';
-        const COIN_KEY = 'giaobai_family_coins';
-
-        let currentUser = null;
-        let currentRole = null;
-        let familyCode = null;
-
-        function checkFirebaseConfig(config) {
+        function isValidFirebaseConfig(config) {
             return !!config &&
                 config.apiKey &&
                 config.apiKey !== 'YOUR_API_KEY' &&
@@ -209,37 +250,89 @@
         }
 
         function getFamilyStorageKey() {
-            return `${STORAGE_KEY}_${familyCode || 'default'}`;
+            return `${FAMILY_PREFIX}_${(familyCode || 'default').toUpperCase()}`;
         }
 
-        function getFamilyCoinKey() {
-            return `${COIN_KEY}_${familyCode || 'default'}`;
-        }
-
-        function getFamilyTasks() {
+        function getFamilyData() {
             const raw = localStorage.getItem(getFamilyStorageKey());
-            return raw ? JSON.parse(raw) : [];
+            if (!raw) {
+                return {
+                    familyCode: familyCode || 'DEFAULT',
+                    students: {},
+                    tasks: [],
+                    lastSelectedChild: null
+                };
+            }
+            try {
+                return JSON.parse(raw);
+            } catch {
+                return { familyCode: familyCode || 'DEFAULT', students: {}, tasks: [], lastSelectedChild: null };
+            }
         }
 
-        function saveFamilyTasks(tasks) {
-            localStorage.setItem(getFamilyStorageKey(), JSON.stringify(tasks));
+        function saveFamilyData(data) {
+            localStorage.setItem(getFamilyStorageKey(), JSON.stringify(data));
         }
 
-        function getFamilyCoins() {
-            const raw = localStorage.getItem(getFamilyCoinKey());
-            return raw ? Number(raw) : 0;
+        function ensureStudent(studentName) {
+            const state = getFamilyData();
+            const name = studentName ? studentName.trim() : '';
+            if (!name) return null;
+            if (!state.students[name]) {
+                state.students[name] = {
+                    name,
+                    stars: 0,
+                    score: 0,
+                    lastUpdated: new Date().toISOString()
+                };
+            }
+            saveFamilyData(state);
+            return name;
         }
 
-        function setFamilyCoins(value) {
-            localStorage.setItem(getFamilyCoinKey(), String(value));
+        function getStudentsList() {
+            const state = getFamilyData();
+            return Object.values(state.students || {}).sort((a, b) => a.name.localeCompare(b.name));
+        }
+
+        function updateSelectedStudent() {
+            const state = getFamilyData();
+            const students = getStudentsList();
+            const select = document.getElementById('studentSelect');
+            if (!select) return;
+
+            const value = currentChild || state.lastSelectedChild || students[0]?.name || '';
+            currentChild = value;
+            state.lastSelectedChild = value;
+            saveFamilyData(state);
+            select.innerHTML = '';
+
+            if (!students.length) {
+                select.innerHTML = '<option value="">Chưa có bé nào</option>';
+                return;
+            }
+
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.name;
+                option.textContent = student.name;
+                if (student.name === value) option.selected = true;
+                select.appendChild(option);
+            });
+        }
+
+        function getCurrentStudentInfo() {
+            const studentName = currentChild || currentUser || '';
+            const state = getFamilyData();
+            return state.students?.[studentName] || { name: studentName, stars: 0, score: 0 };
         }
 
         function updateCoinDisplay() {
-            const coinCountEl = document.getElementById('coinCount');
-            const coinDisplayEl = document.getElementById('coinDisplay');
-            const coins = getFamilyCoins();
-            if (coinCountEl) coinCountEl.textContent = String(coins);
-            if (coinDisplayEl && currentRole === 'student') coinDisplayEl.classList.remove('hidden');
+            const coinDisplay = document.getElementById('coinDisplay');
+            const coinCount = document.getElementById('coinCount');
+            const student = getCurrentStudentInfo();
+            if (coinCount) coinCount.textContent = String(student.stars || 0);
+            if (coinDisplay && currentRole === 'student') coinDisplay.classList.remove('hidden');
         }
 
         function escapeHtml(value = '') {
@@ -255,58 +348,50 @@
             const total = tasks.length;
             const submitted = tasks.filter(item => item.status === 'submitted').length;
             const graded = tasks.filter(item => item.status === 'graded').length;
-            const stars = tasks.reduce((sum, item) => sum + (item.rewardStars || 0), 0);
+            const stars = tasks.reduce((sum, item) => sum + (Number(item.rewardStars) || 0), 0);
 
-            document.getElementById('statTotal').textContent = total;
-            document.getElementById('statSubmitted').textContent = submitted;
-            document.getElementById('statGraded').textContent = graded;
-            document.getElementById('statStars').textContent = stars;
+            const totalEl = document.getElementById('statTotal');
+            const submittedEl = document.getElementById('statSubmitted');
+            const gradedEl = document.getElementById('statGraded');
+            const starsEl = document.getElementById('statStars');
+
+            if (totalEl) totalEl.textContent = total;
+            if (submittedEl) submittedEl.textContent = submitted;
+            if (gradedEl) gradedEl.textContent = graded;
+            if (starsEl) starsEl.textContent = stars;
         }
 
-        async function createTaskInStore(task) {
-            if (!db || !familyCode) return;
-            try {
-                await setDoc(doc(db, `families/${familyCode}/tasks`, task.id), {
-                    ...task,
-                    createdAt: serverTimestamp()
-                });
-            } catch (error) {
-                console.warn('Firestore write failed, using localStorage fallback:', error);
+        function renderLeaderboard() {
+            const leaderboardEl = document.getElementById('leaderboard');
+            if (!leaderboardEl) return;
+            const state = getFamilyData();
+            const students = getStudentsList();
+
+            leaderboardEl.innerHTML = '';
+            if (!students.length) {
+                leaderboardEl.innerHTML = '<p class="empty-state">Chưa có bé nào trong gia đình.</p>';
+                return;
             }
-        }
 
-        function syncFamilyDataFromLocal() {
-            const tasks = getFamilyTasks();
-            setTaskStats(tasks);
-            renderTasks(tasks);
-        }
-
-        function subscribeFirebase() {
-            if (!db || !familyCode) return;
-
-            const tasksRef = query(collection(db, `families/${familyCode}/tasks`), orderBy('createdAt', 'desc'));
-            if (unsubscribe) unsubscribe();
-
-            unsubscribe = onSnapshot(tasksRef, (snapshot) => {
-                const tasks = [];
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    tasks.push({
-                        ...data,
-                        id: docSnap.id,
-                        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : (data.createdAt || new Date().toISOString())
-                    });
-                });
-                saveFamilyTasks(tasks);
-                setTaskStats(tasks);
-                renderTasks(tasks);
-            }, (error) => {
-                console.warn('Firestore listener failed:', error);
-                syncFamilyDataFromLocal();
+            const ordered = [...students].sort((a, b) => (b.stars || 0) - (a.stars || 0));
+            ordered.forEach((student, index) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between p-3 rounded-xl border border-sky-100 bg-sky-50';
+                row.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-sky-400 to-purple-500 text-white flex items-center justify-center font-bold">${index + 1}</div>
+                        <div>
+                            <div class="font-semibold text-gray-800">${escapeHtml(student.name)}</div>
+                            <div class="text-xs text-gray-500">Điểm tích lũy</div>
+                        </div>
+                    </div>
+                    <div class="font-bold text-orange-600"><i class="fas fa-star mr-1"></i>${student.stars || 0}</div>
+                `;
+                leaderboardEl.appendChild(row);
             });
         }
 
-        function renderTasks(tasks = getFamilyTasks()) {
+        function renderTasks(tasks = getFamilyData().tasks || []) {
             const parentList = document.getElementById('parentTaskList');
             const studentList = document.getElementById('studentTaskList');
 
@@ -321,13 +406,24 @@
                 return;
             }
 
-            tasks.forEach((task) => {
+            const filteredTasks = currentRole === 'parent' && currentChild
+                ? tasks.filter(task => task.studentName === currentChild)
+                : tasks;
+
+            if (!filteredTasks.length) {
+                parentList.innerHTML = '<p class="empty-state">Bé này chưa có bài tập nào.</p>';
+                studentList.innerHTML = '<p class="empty-state">Chưa có bài tập nào dành cho bạn.</p>';
+                return;
+            }
+
+            filteredTasks.forEach((task) => {
                 const status = task.status || 'assigned';
                 const statusColor = status === 'assigned' ? 'bg-gray-500' : status === 'submitted' ? 'bg-yellow-500' : 'bg-green-500';
                 const subjectName = escapeHtml(task.subject || 'Bài tập');
                 const contentHtml = escapeHtml(task.content || '');
                 const answerHtml = escapeHtml(task.answer || '');
                 const feedbackHtml = escapeHtml(task.feedback || '');
+                const studentNameHtml = escapeHtml(task.studentName || 'Tất cả');
 
                 if (currentRole === 'student') {
                     studentList.insertAdjacentHTML('beforeend', `
@@ -360,6 +456,7 @@
                                 <h4 class="font-bold text-sky-700">Môn: ${subjectName}</h4>
                                 <span class="status-pill ${statusColor}">${status}</span>
                             </div>
+                            <div class="text-xs text-gray-500 mb-2">Cho bé: <span class="font-semibold">${studentNameHtml}</span></div>
                             <div class="whitespace-pre-line leading-relaxed text-sm text-gray-600 mb-3">${contentHtml}</div>
 
                             ${status === 'submitted' || status === 'graded' ? `
@@ -388,18 +485,56 @@
             });
         }
 
+        function renderAll() {
+            const state = getFamilyData();
+            const tasks = state.tasks || [];
+            setTaskStats(tasks);
+            renderLeaderboard();
+            renderTasks(tasks);
+            updateSelectedStudent();
+            updateCoinDisplay();
+            const studentStars = document.getElementById('studentStars');
+            if (studentStars) {
+                const s = getCurrentStudentInfo();
+                studentStars.textContent = s.stars || 0;
+            }
+        }
+
         function login(role) {
             const code = document.getElementById('familyCode').value.trim().toUpperCase();
             const name = document.getElementById('username').value.trim();
+            const studentName = document.getElementById('studentNameInput').value.trim();
 
             if (!code || !name) {
                 alert('Vui lòng nhập đủ Mã gia đình và Tên!');
                 return;
             }
 
-            currentUser = name;
-            currentRole = role;
             familyCode = code;
+            currentRole = role;
+            currentUser = name;
+
+            const state = getFamilyData();
+            if (role === 'parent') {
+                if (studentName) {
+                    const created = ensureStudent(studentName);
+                    if (created) {
+                        currentChild = created;
+                        state.lastSelectedChild = created;
+                        saveFamilyData(state);
+                    }
+                } else {
+                    const students = Object.keys(state.students || {});
+                    currentChild = students[0] || null;
+                    state.lastSelectedChild = currentChild;
+                    saveFamilyData(state);
+                }
+            } else {
+                const selected = ensureStudent(name) || studentName || name;
+                currentChild = selected;
+                state.lastSelectedChild = selected;
+                saveFamilyData(state);
+            }
 
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('userInfo').classList.remove('hidden');
@@ -414,11 +549,10 @@
                 document.getElementById('coinDisplay').classList.remove('hidden');
             }
 
-            updateCoinDisplay();
             if (db) {
                 subscribeFirebase();
             } else {
-                syncFamilyDataFromLocal();
+                renderAll();
             }
         }
 
@@ -426,8 +560,27 @@
             currentUser = null;
             currentRole = null;
             familyCode = null;
+            currentChild = null;
             if (unsubscribe) unsubscribe();
             location.reload();
+        }
+
+        function addStudent() {
+            const nameInput = document.getElementById('newStudentName');
+            const studentName = nameInput.value.trim();
+            if (!studentName) {
+                alert('Nhập tên bé trước khi thêm');
+                return;
+            }
+
+            const state = getFamilyData();
+            const student = ensureStudent(studentName);
+            if (!student) return;
+            currentChild = student;
+            state.lastSelectedChild = student;
+            saveFamilyData(state);
+            nameInput.value = '';
+            renderAll();
         }
 
         async function generateTasks() {
@@ -455,11 +608,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `Đóng vai giáo viên tiểu học. Hãy soạn ${count} câu hỏi bài tập môn ${subject} cho học sinh lớp 2. Yêu cầu: trình bày rõ ràng, dễ hiểu, mỗi câu hỏi cách nhau bằng một dòng trống. ${promptExtra}`
-                            }]
-                        }]
+                        contents: [{ parts: [{ text: `Đóng vai giáo viên tiểu học. Hãy soạn ${count} câu hỏi bài tập môn ${subject} cho học sinh lớp 2. Yêu cầu: trình bày rõ ràng, dễ hiểu, mỗi câu hỏi cách nhau bằng một dòng trống. ${promptExtra}` }] }]
                     })
                 });
 
@@ -469,7 +618,9 @@
                 }
 
                 const taskContent = data.candidates[0].content.parts[0].text.trim();
-                const taskId = String(Date.now());
+                const taskId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+                const state = getFamilyData();
+                const targetStudent = currentChild || getStudentsList()[0]?.name || currentUser || 'Tất cả';
                 const task = {
                     id: taskId,
                     subject,
@@ -478,16 +629,15 @@
                     status: 'assigned',
                     feedback: '',
                     rewardStars: 0,
+                    studentName: targetStudent,
                     createdAt: new Date().toISOString()
                 };
 
-                const tasks = getFamilyTasks();
-                tasks.unshift(task);
-                saveFamilyTasks(tasks);
-                setTaskStats(tasks);
-                renderTasks(tasks);
+                state.tasks = [task, ...(state.tasks || [])];
+                saveFamilyData(state);
+                renderAll();
 
-                if (db) {
+                if (db && familyCode) {
                     await createTaskInStore(task);
                 }
 
@@ -500,6 +650,55 @@
             }
         }
 
+        async function createTaskInStore(task) {
+            if (!db || !familyCode) return;
+            try {
+                await setDoc(doc(db, `families/${familyCode}/tasks`, task.id), {
+                    ...task,
+                    createdAt: serverTimestamp()
+                });
+            } catch (error) {
+                console.warn('Firestore write failed:', error);
+            }
+        }
+
+        function subscribeFirebase() {
+            if (!db || !familyCode) return;
+            const tasksRef = query(collection(db, `families/${familyCode}/tasks`), orderBy('createdAt', 'desc'));
+            if (unsubscribe) unsubscribe();
+
+            unsubscribe = onSnapshot(tasksRef, (snapshot) => {
+                const state = getFamilyData();
+                const tasks = [];
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    tasks.push({
+                        ...data,
+                        id: docSnap.id,
+                        createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : (data.createdAt || new Date().toISOString())
+                    });
+                });
+                state.tasks = tasks;
+                saveFamilyData(state);
+                renderAll();
+            }, (error) => {
+                console.warn('Firestore listener failed:', error);
+                renderAll();
+            });
+        }
+
+        function updateFamilyStudentStars(taskId, starsAward = 0) {
+            const state = getFamilyData();
+            const task = (state.tasks || []).find(item => item.id === taskId);
+            if (!task || !task.studentName) return;
+            const student = state.students[task.studentName];
+            if (!student) return;
+            student.stars = (Number(student.stars) || 0) + Number(starsAward || 0);
+            student.score = student.stars;
+            student.lastUpdated = new Date().toISOString();
+            saveFamilyData(state);
+        }
+
         async function submitTask(taskId) {
             const answer = document.getElementById(`ans_${taskId}`)?.value.trim();
             if (!answer) {
@@ -507,18 +706,14 @@
                 return;
             }
 
-            const tasks = getFamilyTasks();
-            const updated = tasks.map(task => task.id === taskId ? { ...task, answer, status: 'submitted' } : task);
-            saveFamilyTasks(updated);
-            setTaskStats(updated);
-            renderTasks(updated);
+            const state = getFamilyData();
+            state.tasks = (state.tasks || []).map(task => task.id === taskId ? { ...task, answer, status: 'submitted' } : task);
+            saveFamilyData(state);
+            renderAll();
 
             if (db && familyCode) {
                 try {
-                    await setDoc(doc(db, `families/${familyCode}/tasks`, taskId), {
-                        answer,
-                        status: 'submitted'
-                    }, { merge: true });
+                    await setDoc(doc(db, `families/${familyCode}/tasks`, taskId), { answer, status: 'submitted' }, { merge: true });
                 } catch (error) {
                     console.warn('Submit sync failed:', error);
                 }
@@ -527,17 +722,14 @@
 
         async function saveFeedback(taskId) {
             const feedback = document.getElementById(`fb_${taskId}`)?.value.trim() || '';
-            const tasks = getFamilyTasks();
-            const updated = tasks.map(task => task.id === taskId ? { ...task, feedback } : task);
-            saveFamilyTasks(updated);
-            setTaskStats(updated);
-            renderTasks(updated);
+            const state = getFamilyData();
+            state.tasks = (state.tasks || []).map(task => task.id === taskId ? { ...task, feedback } : task);
+            saveFamilyData(state);
+            renderAll();
 
             if (db && familyCode) {
                 try {
-                    await setDoc(doc(db, `families/${familyCode}/tasks`, taskId), {
-                        feedback
-                    }, { merge: true });
+                    await setDoc(doc(db, `families/${familyCode}/tasks`, taskId), { feedback }, { merge: true });
                 } catch (error) {
                     console.warn('Save feedback failed:', error);
                 }
@@ -545,41 +737,37 @@
         }
 
         function giveReward(taskId) {
-            const tasks = getFamilyTasks();
-            let currentCoins = getFamilyCoins();
+            const state = getFamilyData();
+            const task = (state.tasks || []).find(item => item.id === taskId);
+            if (!task) return;
+
             const rewardStars = 10;
-            currentCoins += rewardStars;
-            setFamilyCoins(currentCoins);
+            task.rewardStars = rewardStars;
+            task.status = 'graded';
+            if (!task.feedback) task.feedback = 'Đã nhận 10 sao vì hoàn thành tốt!';
 
-            const updated = tasks.map(task => {
-                if (task.id === taskId) {
-                    return {
-                        ...task,
-                        rewardStars: rewardStars,
-                        status: 'graded',
-                        feedback: task.feedback || 'Đã nhận 10 sao vì hoàn thành tốt!'
-                    };
-                }
-                return task;
-            });
+            const student = state.students[task.studentName];
+            if (student) {
+                student.stars = (Number(student.stars) || 0) + rewardStars;
+                student.score = student.stars;
+                student.lastUpdated = new Date().toISOString();
+            }
 
-            saveFamilyTasks(updated);
-            setTaskStats(updated);
-            renderTasks(updated);
-            updateCoinDisplay();
+            saveFamilyData(state);
+            renderAll();
 
             if (db && familyCode) {
                 setDoc(doc(db, `families/${familyCode}/tasks`, taskId), {
                     rewardStars,
                     status: 'graded',
-                    feedback: updated.find(item => item.id === taskId)?.feedback || ''
+                    feedback: task.feedback
                 }, { merge: true }).catch(console.warn);
             }
         }
 
         async function aiGrade(taskId) {
-            const tasks = getFamilyTasks();
-            const task = tasks.find(item => item.id === taskId);
+            const state = getFamilyData();
+            const task = (state.tasks || []).find(item => item.id === taskId);
             if (!task || !task.answer) {
                 alert('Chưa có bài làm để chấm.');
                 return;
@@ -596,11 +784,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `Bạn là giáo viên tiểu học. Hãy chấm bài làm của học sinh theo đề bài dưới đây. Viết ngắn gọn, tích cực, dễ hiểu cho trẻ. Đưa ra nhận xét 2-3 câu, khen ngợi và gợi ý sửa.\n\nĐề bài:\n${task.content}\n\nBài làm của học sinh:\n${task.answer}`
-                            }]
-                        }]
+                        contents: [{ parts: [{ text: `Bạn là giáo viên tiểu học. Hãy chấm bài làm của học sinh theo đề bài dưới đây. Viết ngắn gọn, tích cực, dễ hiểu cho trẻ. Đưa ra nhận xét 2-3 câu, khen ngợi và gợi ý sửa.\n\nĐề bài:\n${task.content}\n\nBài làm của học sinh:\n${task.answer}` }] }]
                     })
                 });
 
@@ -610,10 +794,18 @@
                 }
 
                 const result = data.candidates[0].content.parts[0].text.trim();
-                const updated = tasks.map(item => item.id === taskId ? { ...item, feedback: result, status: 'graded' } : item);
-                saveFamilyTasks(updated);
-                setTaskStats(updated);
-                renderTasks(updated);
+                task.feedback = result;
+                task.status = 'graded';
+
+                const student = state.students[task.studentName];
+                if (student) {
+                    student.stars = (Number(student.stars) || 0) + 5;
+                    student.score = student.stars;
+                    student.lastUpdated = new Date().toISOString();
+                }
+
+                saveFamilyData(state);
+                renderAll();
 
                 if (db && familyCode) {
                     await setDoc(doc(db, `families/${familyCode}/tasks`, taskId), {
@@ -626,14 +818,31 @@
             }
         }
 
+        function bindStudentSelect() {
+            const select = document.getElementById('studentSelect');
+            if (!select) return;
+            select.onchange = (event) => {
+                currentChild = event.target.value || null;
+                const state = getFamilyData();
+                state.lastSelectedChild = currentChild;
+                saveFamilyData(state);
+                renderAll();
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            bindStudentSelect();
+            renderAll();
+        });
+
         window.login = login;
         window.logout = logout;
+        window.addStudent = addStudent;
         window.generateTasks = generateTasks;
         window.submitTask = submitTask;
         window.saveFeedback = saveFeedback;
         window.giveReward = giveReward;
         window.aiGrade = aiGrade;
-        updateCoinDisplay();
     </script>
 </body>
 </html>
